@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import random
 from discord.ext import commands
 from googletrans import Translator
+from requests import get
 
 intents = discord.Intents.default()
 intents.members = True
@@ -15,10 +16,10 @@ def translate_text(text_input):
     return translation
 
 WELCOME_OPTIONS = ['愚蠢的西方人', '外国人', '鬼佬', '鬼子', '老外', '美国间谍',
-'资本家', '资本主义猪']
+'资本家', '资本主义猪', '安全威胁']
 
 FORBIDDEN_WORDS = ['bad', 'stupid', 'worse', 'hate', 'overthrow', 'awful', 'dreadful', 'poor', 'cheap', 'imperfect', 'sucks', 'suck', 'trash', 'garbage', 'dislike', 'shit', 'fuck', 'worst', 'terrible', 'dumb']
-PRAISE_WORDS = ['good', '#1', 'number 1', 'great', 'fucks', 'pog', 'poggers', 'best', 'amazing']
+PRAISE_WORDS = ['good', '#1', 'number 1', 'great', 'fucks', 'pog', 'poggers', 'best', 'amazing', 'love', 'china#1', 'superior', 'praise']
 
 
 load_dotenv()
@@ -53,6 +54,11 @@ async def translate(ctx, arg):
     translation = 'Hi'
     await ctx.send(arg)
 
+@bot.command(name='server-ip', help='Displays the current IP of the Minecraft Server. Use in case of IP change.')
+async def server_ip(ctx):
+    ip = get('https://api.ipify.org').text
+    await ctx.send(f'The Current Server IP is: {ip}')
+
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
@@ -75,6 +81,9 @@ async def on_message(message):
         await message.channel.send(response)
     elif ('china' in message_list) and praise_word_check:
         response = '🇨🇳 The People Of China Thank You For Your Kind Words. +100 Social Credit 🇨🇳'
+        await message.channel.send(response)
+    elif 'taiwan' in message_list:
+        response = '🇨🇳 Did You Mean Chinese Taipei? 🇨🇳'
         await message.channel.send(response)
     elif message.content == 'china' or message.content == 'China':
         response = '🇨🇳 China #1 🇨🇳'
