@@ -5,6 +5,8 @@ import random
 from discord.ext import commands
 from googletrans import Translator
 
+intents = discord.Intents.default()
+intents.members = True
 
 def translate_text(text_input):
     translator = Translator()
@@ -22,7 +24,7 @@ PRAISE_WORDS = ['good', '#1', 'number 1', 'great', 'fucks', 'pog', 'poggers', 'b
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='!', intents=intents)
 
 @bot.event
 async def on_ready():
@@ -31,9 +33,13 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member): # Need to get the welcome function working
-    channel = bot.get_channel(927423272516206605)
-    await channel.send(f'The {random.choice(WELCOME_OPTIONS)} {member.name} has joined the server!')
-
+    guild = member.guild
+    print(f'{member.name} Joined')
+    if guild.system_channel != None:
+        welcome_message = f'The {random.choice(WELCOME_OPTIONS)} {member.name} has joined the server!'
+        await guild.system_channel.send(welcome_message)
+    else:
+        return
 
 @bot.command(name='translate') # Finish Translate command using googletrans lib
 async def translate(ctx, arg):
