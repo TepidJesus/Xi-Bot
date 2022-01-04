@@ -3,7 +3,14 @@ import discord
 from dotenv import load_dotenv
 import random
 from discord.ext import commands
-import googletrans as gt
+from googletrans import Translator
+
+
+def translate_text(text_input):
+    translator = Translator()
+    translation = translator.translate(text = text_input, src='auto')
+    print(translation)
+    return translation
 
 WELCOME_OPTIONS = ['愚蠢的西方人', '外国人', '鬼佬', '鬼子', '老外', '美国间谍',
 '资本家', '资本主义猪']
@@ -11,7 +18,6 @@ WELCOME_OPTIONS = ['愚蠢的西方人', '外国人', '鬼佬', '鬼子', '老�
 FORBIDDEN_WORDS = ['bad', 'stupid', 'worse', 'hate', 'overthrow', 'awful', 'dreadful', 'poor', 'cheap', 'imperfect', 'sucks', 'suck', 'trash', 'garbage', 'dislike', 'shit', 'fuck', 'worst', 'terrible', 'dumb']
 PRAISE_WORDS = ['good', '#1', 'number 1', 'great', 'fucks', 'pog', 'poggers', 'best', 'amazing']
 
-credit_score_scoreboard = dict()
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -31,7 +37,14 @@ async def on_member_join(member): # Need to get the welcome function working
 
 @bot.command(name='translate') # Finish Translate command using googletrans lib
 async def translate(ctx, arg):
-    print('Command Run')
+    print(arg)
+    arg = arg.encode('utf-8')
+    translator = Translator(service_urls=None, user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64)', raise_exception=False)
+    print('Translator Initialised')
+    print(f'ARG: {arg}')
+    translation = translator.translate(arg)
+    print(f'translatoin: {translation}')
+    translation = 'Hi'
     await ctx.send(arg)
 
 @bot.event
