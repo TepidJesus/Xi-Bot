@@ -9,22 +9,16 @@ from requests import get
 intents = discord.Intents.default()
 intents.members = True
 
-def translate_text(text_input):
-    translator = Translator()
-    translation = translator.translate(text = text_input, src='auto')
-    print(translation)
-    return translation
-
 WELCOME_OPTIONS = ['愚蠢的西方人', '外国人', '鬼佬', '鬼子', '老外', '美国间谍',
 '资本家', '资本主义猪', '安全威胁']
 
 FORBIDDEN_WORDS = ['bad', 'stupid', 'worse', 'hate', 'overthrow', 'awful', 'dreadful', 'poor', 'cheap', 'imperfect', 'sucks', 'suck', 'trash', 'garbage', 'dislike', 'shit', 'fuck', 'worst', 'terrible', 'dumb']
 PRAISE_WORDS = ['good', '#1', 'number 1', 'great', 'fucks', 'pog', 'poggers', 'best', 'amazing', 'love', 'china#1', 'superior', 'praise']
 
-
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
+
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 @bot.event
@@ -37,22 +31,11 @@ async def on_member_join(member): # Need to get the welcome function working
     guild = member.guild
     print(f'{member.name} Joined')
     if guild.system_channel != None:
-        welcome_message = f'The {random.choice(WELCOME_OPTIONS)} {member.name} has joined the server!'
+        welcome_message = f'The {random.choice(WELCOME_OPTIONS)} @{member.name} has joined the server!'
         await guild.system_channel.send(welcome_message)
     else:
         return
 
-@bot.command(name='translate') # Finish Translate command using googletrans lib
-async def translate(ctx, arg):
-    print(arg)
-    arg = arg.encode('utf-8')
-    translator = Translator(service_urls=None, user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64)', raise_exception=False)
-    print('Translator Initialised')
-    print(f'ARG: {arg}')
-    translation = translator.translate(arg)
-    print(f'translatoin: {translation}')
-    translation = 'Hi'
-    await ctx.send(arg)
 
 @bot.command(name='server-ip', help='Displays the current IP of the Minecraft Server. Use in case of IP change.')
 async def server_ip(ctx):
