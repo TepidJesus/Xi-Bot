@@ -59,20 +59,24 @@ async def server_ip(ctx):
     ip = get('https://api.ipify.org').text
     await ctx.send(f'The Current Server IP is: {ip}')
 
-@bot.event
-async def on_message(message):
+@bot.event    
+async def on_message(message):     
     if message.author == bot.user:
         return
-
     message_list = list()
     message_list = message.content.split(' ')
     for i in range(len(message_list)):
         if message_list[i].isalpha():
             message_list[i] = message_list[i].lower()
+        elif message_list[i].isalnum() != True:
+            message_list[i] = message_list[i].strip('!')
+            message_list[i] = message_list[i].strip('.')
+            message_list[i] = message_list[i].strip(',')
+            message_list[i] = message_list[i].strip('-')
+            message_list[i] = message_list[i].lower()
         else:
-            continue
-
-    print(message_list)
+            continue 
+    print(f'Processed Message: {message_list}')
     bad_word_check = any(other_word in message_list for other_word in FORBIDDEN_WORDS)
     praise_word_check = any(other_word in message_list for other_word in PRAISE_WORDS)
 
@@ -80,7 +84,7 @@ async def on_message(message):
         response = '🇨🇳 This message has been reported to The Ministry of State Security 🇨🇳'
         await message.channel.send(response)
     elif ('china' in message_list) and praise_word_check:
-        response = '🇨🇳 The People Of China Thank You For Your Kind Words. +100 Social Credit 🇨🇳'
+        response = '🇨🇳 The People Of China Thank You For Your Kind Words. + 100 Social Credit 🇨🇳'
         await message.channel.send(response)
     elif 'taiwan' in message_list:
         response = '🇨🇳 Did You Mean Chinese Taipei? 🇨🇳'
@@ -88,6 +92,7 @@ async def on_message(message):
     elif message.content == 'china' or message.content == 'China':
         response = '🇨🇳 China #1 🇨🇳'
         await message.channel.send(response)
+    print('Checks Finished')
     await bot.process_commands(message)
 
 bot.run(TOKEN)
