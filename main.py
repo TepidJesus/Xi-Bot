@@ -13,8 +13,10 @@ intents.members = True
 WELCOME_OPTIONS = ['愚蠢的西方人', '外国人', '鬼佬', '鬼子', '老外', '美国间谍',
 '资本家', '资本主义猪', '安全威胁']
 
-FORBIDDEN_WORDS = ['bad', 'stupid', 'worse', 'hate', 'overthrow', 'awful', 'dreadful', 'poor', 'cheap', 'imperfect', 'sucks', 'suck', 'trash', 'garbage', 'dislike', 'shit', 'fuck', 'worst', 'terrible', 'dumb']
-PRAISE_WORDS = ['good', '#1', 'number 1', 'great', 'fucks', 'pog', 'poggers', 'best', 'amazing', 'love', 'china#1', 'superior', 'praise']
+FORBIDDEN_WORDS = ['bad', 'stupid', 'worse', 'hate', 'overthrow', 'awful', 'dreadful', 'poor', 'cheap', 'imperfect', 'sucks', 'suck', 'trash', 'garbage', 'dislike', 'shit', 'fuck', 'worst', 'terrible', 'dumb', 'cool', 'amazingly']
+PRAISE_WORDS = ['good', '#1', 'number 1', 'great', 'fucks', 'pog', 'poggers', 'best', 'amazing', 'love', 'china#1', 'superior', 'praise', 'very']
+CHINA_WORDS = ['china', 'chinese']
+NEGATIONS = ['isn\'t', 'not', 'never', 'isnt']
 
 def refresh_creditscores(guild_members):
     with open('credit_scores.json', 'r') as raw_json_scores:
@@ -108,23 +110,29 @@ async def on_message(message):
             message_list[i] = message_list[i].strip('-')
             message_list[i] = message_list[i].lower()
         else:
-            continue 
-    print(f'Processed Message: {message_list}')
+            continue
     bad_word_check = any(other_word in message_list for other_word in FORBIDDEN_WORDS)
     praise_word_check = any(other_word in message_list for other_word in PRAISE_WORDS)
+    china_check = any(other_word in message_list for other_word in CHINA_WORDS)
+    for i in range(len(message_list)):
+        if message_list[i] in PRAISE_WORDS and message_list[i-1] in NEGATIONS:
+            bad_word_check = True
 
-    if ('china' in message_list) and bad_word_check:
+    print(f'Processed Message: {message_list}')
+    
+
+    if china_check and bad_word_check:
         response = '🇨🇳 This message has been reported to The Ministry of State Security 🇨🇳\n🇨🇳 10 Credit Points Have Been Deducted From Your Balance 🇨🇳'
         alter_creditscore(member=message.author.name, points=-10)
         await message.channel.send(response)
-    elif ('china' in message_list) and praise_word_check:
+    elif china_check and praise_word_check and bad_word_check != True:
         response = '🇨🇳 The People Of China Thank You For Your Kind Words 🇨🇳\n🇨🇳 1 Credit Point Has Been Added To Your Balance 🇨🇳'
         alter_creditscore(member=message.author.name, points=1)
         await message.channel.send(response)
     elif 'taiwan' in message_list:
         response = '🇨🇳 Did You Mean Chinese Taipei? 🇨🇳'
         await message.channel.send(response)
-    elif message.content == 'china' or message.content == 'China':
+    elif china_check:
         response = '🇨🇳 China #1 🇨🇳'
         await message.channel.send(response)
     await bot.process_commands(message)
