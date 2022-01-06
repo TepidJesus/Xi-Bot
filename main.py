@@ -117,7 +117,8 @@ async def on_message(message):
     for i in range(len(message_list)):
         if message_list[i] in PRAISE_WORDS and message_list[i-1] in NEGATIONS:
             bad_word_check = True
-
+        elif message_list[i] in FORBIDDEN_WORDS and message_list[i-1] in NEGATIONS:
+            bad_word_check = False
     print(f'Processed Message: {message_list}')
     
 
