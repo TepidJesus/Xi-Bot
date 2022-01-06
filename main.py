@@ -46,6 +46,13 @@ def alter_creditscore(member, points):
     with open('credit_scores.json', 'w') as file:
         json.dump(user_credit_scores, file)
 
+def get_credit_score(member_name):
+    member_score = str()
+    with open('credit_scores.json', 'r') as raw_json_scores:
+        user_credit_scores = json.load(raw_json_scores)
+        member_score = f'🇨🇳 You Have A Balance Of: {user_credit_scores[member_name]} Points 🇨🇳'
+    return member_score
+
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
@@ -77,6 +84,11 @@ async def server_ip(ctx):
 @bot.command(name='show-credit')
 async def dump_json(ctx):
     scores = display_credit_scores()
+    await ctx.send(scores)
+
+@bot.command(name='my-credit')
+async def my_credit(ctx):
+    scores = get_credit_score(ctx.message.author.name)
     await ctx.send(scores)
 
 @bot.event    
