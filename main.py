@@ -16,7 +16,7 @@ WELCOME_OPTIONS = ['愚蠢的西方人', '外国人', '鬼佬', '鬼子', '老�
 FORBIDDEN_WORDS = ['bad', 'stupid', 'worse', 'hate', 'overthrow', 'awful', 'dreadful', 'poor', 'cheap', 'imperfect', 'sucks', 'suck', 'trash', 'garbage', 'dislike', 'shit', 'fuck', 'worst', 'terrible', 'dumb']
 PRAISE_WORDS = ['good', '#1', 'number 1', 'great', 'fucks', 'pog', 'poggers', 'best', 'amazing', 'love', 'china#1', 'superior', 'praise']
 
-def refresh_creditscores(guild_members): # READY
+def refresh_creditscores(guild_members):
     with open('credit_scores.json', 'r') as raw_json_scores:
         user_credit_scores = json.load(raw_json_scores)
         for member in guild_members:
@@ -27,7 +27,7 @@ def refresh_creditscores(guild_members): # READY
     with open('credit_scores.json', 'w') as file:
         json.dump(user_credit_scores, file)
 
-def display_credit_scores(): # READY
+def display_credit_scores():
     output_string = str()
     with open('credit_scores.json', 'r') as raw_json_scores:
         user_credit_scores = json.load(raw_json_scores)
@@ -37,7 +37,7 @@ def display_credit_scores(): # READY
             output_string = output_string + line_str
     return output_string    
 
-def alter_creditscore(member, points): # READY
+def alter_creditscore(member, points):
     with open('credit_scores.json', 'r') as raw_json_scores:
         user_credit_scores = json.load(raw_json_scores)
         current_points = user_credit_scores[member]
@@ -56,7 +56,8 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 async def on_ready():
     print(f'{bot.user} has properly joined discord...')
     print(f'{bot.user} Has Joined The Server {bot.guilds[0]}')
-
+    refresh_creditscores(guild_members=bot.get_all_members())
+    
 @bot.event
 async def on_member_join(member):
     guild = member.guild
