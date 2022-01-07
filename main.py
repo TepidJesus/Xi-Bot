@@ -6,6 +6,9 @@ import random
 from discord.ext import commands
 from requests import get
 import json
+from credit_keeper import CreditKeeper
+
+credit_score_keeper = CreditKeeper()
 
 intents = discord.Intents.default()
 intents.members = True
@@ -18,43 +21,6 @@ PRAISE_WORDS = ['good', '#1', 'number 1', 'great', 'fucks', 'pog', 'poggers', 'b
 CHINA_WORDS = ['china', 'chinese']
 NEGATIONS = ['isn\'t', 'not', 'never', 'isnt']
 
-def refresh_creditscores(guild_members):
-    with open('credit_scores.json', 'r') as raw_json_scores:
-        user_credit_scores = json.load(raw_json_scores)
-        for member in guild_members:
-            if member.name not in user_credit_scores.keys():
-                user_credit_scores[member.name] = 1000
-            else:
-                continue   
-    with open('credit_scores.json', 'w') as file:
-        json.dump(user_credit_scores, file)
-
-def display_credit_scores():
-    output_string = str()
-    with open('credit_scores.json', 'r') as raw_json_scores:
-        user_credit_scores = json.load(raw_json_scores)
-
-        for member in user_credit_scores.keys():
-            line_str = f'{member}: {user_credit_scores[member]} Points\n'
-            output_string = output_string + line_str
-    return output_string    
-
-def alter_creditscore(member, points):
-    with open('credit_scores.json', 'r') as raw_json_scores:
-        user_credit_scores = json.load(raw_json_scores)
-        current_points = user_credit_scores[member]
-        new_points = current_points + points
-        user_credit_scores[member] = new_points
-    with open('credit_scores.json', 'w') as file:
-        json.dump(user_credit_scores, file)
-
-def get_credit_score(member_name):
-    member_score = str()
-    with open('credit_scores.json', 'r') as raw_json_scores:
-        user_credit_scores = json.load(raw_json_scores)
-        member_score = f'🇨🇳 You Have A Balance Of: {user_credit_scores[member_name]} Points 🇨🇳'
-    return member_score
-
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
@@ -65,13 +31,13 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 async def on_ready():
     print(f'{bot.user} has properly joined discord...')
     print(f'{bot.user} Has Joined The Server {bot.guilds[0]}')
-    refresh_creditscores(guild_members=bot.get_all_members())
+    credit_score_keeper.refresh_creditscores(guild_members=bot.get_all_members())
     
 @bot.event
 async def on_member_join(member):
     guild = member.guild
     print(f'{member.name} Joined')
-    refresh_creditscores(guild_members=bot.get_all_members())
+    credit_score_keeper.refresh_creditscores(guild_members=bot.get_all_members())
     if guild.system_channel != None:
         welcome_message = f'The {random.choice(WELCOME_OPTIONS)} {member.name} has joined the server!'
         await guild.system_channel.send(welcome_message)
@@ -85,12 +51,12 @@ async def server_ip(ctx):
 
 @bot.command(name='show-credit')
 async def dump_json(ctx):
-    scores = display_credit_scores()
+    scores = credit_score_keeper.display_credit_scores()
     await ctx.send(scores)
 
 @bot.command(name='my-credit')
 async def my_credit(ctx):
-    scores = get_credit_score(ctx.message.author.name)
+    scores = credit_score_keeper.get_credit_score(ctx.message.author.name)
     await ctx.send(scores)
 
 @bot.event    
@@ -124,11 +90,11 @@ async def on_message(message):
 
     if china_check and bad_word_check:
         response = '🇨🇳 This message has been reported to The Ministry of State Security 🇨🇳\n🇨🇳 10 Credit Points Have Been Deducted From Your Balance 🇨🇳'
-        alter_creditscore(member=message.author.name, points=-10)
+        credit_score_keeper.alter_creditscore(member=message.author.name, points=-10)
         await message.channel.send(response)
     elif china_check and praise_word_check and bad_word_check != True:
         response = '🇨🇳 The People Of China Thank You For Your Kind Words 🇨🇳\n🇨🇳 1 Credit Point Has Been Added To Your Balance 🇨🇳'
-        alter_creditscore(member=message.author.name, points=1)
+        credit_score_keeper.alter_creditscore(member=message.author.name, points=1)
         await message.channel.send(response)
     elif 'taiwan' in message_list:
         response = '🇨🇳 Did You Mean Chinese Taipei? 🇨🇳'
