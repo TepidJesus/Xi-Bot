@@ -1,2 +1,2 @@
-# ronan-bot
+# Xi-bot
 A basic discord bot with some fun features...
