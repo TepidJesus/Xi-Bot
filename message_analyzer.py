@@ -51,6 +51,9 @@ class Message_processor():
         elif 'taiwan' in message_list:
             response = '🇨🇳 Did You Mean Chinese Taipei? 🇨🇳'
             return response
+        elif 'tienanmen' in message_list:
+            response = '🇨🇳 Odd Of You To Mention A Place Where Nothing Has Ever Happened... Especially on June 4th 1989 🇨🇳\n'
+            return response
         elif china_check:
             response = '🇨🇳 China #1 🇨🇳'
             return response

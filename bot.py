@@ -58,8 +58,6 @@ class XiBot(commands.Bot):
             await bot.process_commands(message)
             if message.author == self.user:
                 return
-            elif message.content.startswith('!'):
-                return
             else:
                 messsage_list = self.message_processor.listify_message(message)
                 bad_word_check, praise_word_check, china_check = self.message_processor.run_message_checks(messsage_list)
