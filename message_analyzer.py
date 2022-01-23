@@ -2,7 +2,7 @@ from credit_keeper import CreditKeeper
 
 FORBIDDEN_WORDS = ['bad', 'stupid', 'worse', 'hate', 'overthrow', 'awful', 'dreadful', 'poor', 'cheap', 'imperfect', 'sucks', 'suck', 'trash', 'garbage', 'dislike', 'shit', 'fuck', 'worst', 'terrible', 'dumb', 'cool', 'amazingly', 'stoopid', 'gey', 'sus', 'imposter', 'corrupt']
 PRAISE_WORDS = ['good', '#1', 'number 1', 'great', 'fucks', 'pog', 'poggers', 'best', 'amazing', 'love', 'china#1', 'superior', 'praise', 'very', 'predatorial']
-CHINA_WORDS = ['china', 'chinese']
+CHINA_WORDS = ['china', 'chinese', 'xi']
 NEGATIONS = ['isn\'t', 'not', 'never', 'isnt']
 
 class Message_processor():
