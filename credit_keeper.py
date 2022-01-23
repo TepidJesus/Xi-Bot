@@ -44,3 +44,20 @@ class CreditKeeper():
             self.user_credit_scores = json.load(self.raw_json_scores)
             self.member_score = f'🇨🇳 You Have A Balance Of: {self.user_credit_scores[member_name]} Points 🇨🇳'
         return self.member_score
+
+    def credit_check(self):
+        with open('credit_scores.json', 'r') as raw_json_scores:
+            self.user_credit_scores = json.load(raw_json_scores)
+            for member in self.user_credit_scores.keys():
+                if self.user_credit_scores[member.name] < 800:
+                    pass
+                elif self.user_credit_scores[member.name] < 600:
+                    pass
+                elif self.user_credit_scores[member.name] < 400:
+                    pass
+                elif self.user_credit_scores[member.name] < 200:
+                    pass
+                elif self.user_credit_scores[member.name] <= 0:
+                    pass
+                else:
+                    continue
