@@ -18,9 +18,9 @@ GUILD = os.getenv('DISCORD_GUILD')
 class XiBot(commands.Bot):
 
     def __init__(self):
-        super().__init__(command_prefix='!')
         intents = discord.Intents.default()
         intents.members = True
+        super().__init__(command_prefix='!', intents=intents)
         self.credit_score_keeper = CreditKeeper()
         self.message_processor = Message_processor()
 
@@ -43,6 +43,9 @@ class XiBot(commands.Bot):
             print(f'{self.user} has properly joined discord...')
             print(f'{self.user} Has Joined The Server {self.guilds[0]}')
             self.credit_score_keeper.refresh_creditscores(guild_members=self.get_all_members())
+            guild_members = self.get_all_members()
+            for member in guild_members:
+                print(member.name)
 
     async def on_member_join(self, member):
         guild = member.guild
@@ -60,8 +63,8 @@ class XiBot(commands.Bot):
                 return
             else:
                 messsage_list = self.message_processor.listify_message(message)
-                bad_word_check, praise_word_check, china_check = self.message_processor.run_message_checks(messsage_list)
-                bot_response = self.message_processor.choose_response(message = message, message_list= messsage_list, china_check = china_check, bad_word_check = bad_word_check, praise_word_check = praise_word_check)
+                raw_sentiment_score, china_check = self.message_processor.run_message_checks(message = message.content, message_list = messsage_list)
+                bot_response = self.message_processor.choose_response(message = message, message_list = messsage_list, china_check = china_check, raw_sentiment_score = raw_sentiment_score)
             if bot_response == None:
                 return
             else:
