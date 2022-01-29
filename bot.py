@@ -40,12 +40,9 @@ class XiBot(commands.Bot):
             await ctx.send(scores)
     
     async def on_ready(self):
-            print(f'{self.user} has properly joined discord...')
-            print(f'{self.user} Has Joined The Server {self.guilds[0]}')
+            print(f'[INFO] {self.user} Has Connected To Discord...')
+            print(f'[INFO] {self.user} Has Joined The Server {self.guilds[0]}')
             self.credit_score_keeper.refresh_creditscores(guild_members=self.get_all_members())
-            guild_members = self.get_all_members()
-            for member in guild_members:
-                print(member.name)
 
     async def on_member_join(self, member):
         guild = member.guild
@@ -65,10 +62,18 @@ class XiBot(commands.Bot):
                 messsage_list = self.message_processor.listify_message(message)
                 raw_sentiment_score, china_check = self.message_processor.run_message_checks(message = message.content, message_list = messsage_list)
                 bot_response = self.message_processor.choose_response(message = message, message_list = messsage_list, china_check = china_check, raw_sentiment_score = raw_sentiment_score)
+            
             if bot_response == None:
                 return
             else:
                 await message.channel.send(bot_response)
+
+            author_credit = self.credit_score_keeper.member_credit_check(member_name = message.author.name)
+            print(author_credit)
+            if author_credit < 900:
+                print('User Credit Low')
+                await message.channel.send('Your Credit Score Is Getting Low...')
+            
                 
 bot = XiBot()
 bot.run(TOKEN)

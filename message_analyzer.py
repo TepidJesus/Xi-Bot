@@ -38,6 +38,7 @@ class Message_processor():
     def choose_response(self, message, message_list, china_check, raw_sentiment_score):
         message_sentiment = str(raw_sentiment_score[0])
         message_sentiment = message_sentiment[0:8]
+
         if china_check and message_sentiment == 'NEGATIVE': # Punish
             response = '🇨🇳 This message has been reported to The Ministry of State Security 🇨🇳\n🇨🇳 10 Credit Points Have Been Deducted From Your Balance 🇨🇳'
             self.credit_score_keeper.alter_creditscore(member=message.author.name, points=-10)

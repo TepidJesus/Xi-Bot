@@ -4,9 +4,9 @@ class CreditKeeper():
     def __init__(self):
         try:
             with open('credit_scores.json', 'x'):
-                print('No Existing JSON Data Found\nGenerating New File')
+                print('[INFO] No Existing JSON Data Found\n[INFO]Generating New File')
         except:
-            print('Existing JSON Data Detected\nA New File Will Not Be Generated')
+            print('[INFO] Existing JSON Data Detected\n[INFO] A New File Will Not Be Generated')
 
     def refresh_creditscores(self, guild_members):
         with open('credit_scores.json', 'r') as raw_json_scores:
@@ -45,19 +45,8 @@ class CreditKeeper():
             self.member_score = f'🇨🇳 You Have A Balance Of: {self.user_credit_scores[member_name]} Points 🇨🇳'
         return self.member_score
 
-    def credit_check(self):
+
+    def member_credit_check(self, member_name):
         with open('credit_scores.json', 'r') as raw_json_scores:
             self.user_credit_scores = json.load(raw_json_scores)
-            for member in self.user_credit_scores.keys():
-                if self.user_credit_scores[member.name] < 800:
-                    pass
-                elif self.user_credit_scores[member.name] < 600:
-                    pass
-                elif self.user_credit_scores[member.name] < 400:
-                    pass
-                elif self.user_credit_scores[member.name] < 200:
-                    pass
-                elif self.user_credit_scores[member.name] <= 0:
-                    pass
-                else:
-                    continue
+            return self.user_credit_scores[member_name]
