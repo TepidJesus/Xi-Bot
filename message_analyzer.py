@@ -1,12 +1,9 @@
-from credit_keeper import CreditKeeper
 import flair
 
 CHINA_WORDS = ['china', 'chinese', 'xi']
 
-
 class Message_processor():
     def __init__(self) -> None:
-        self.credit_score_keeper = CreditKeeper()
         self.flair_sentiment = flair.models.TextClassifier.load('en-sentiment')
         print('[INFO] NLP Network Loaded')
 
@@ -41,21 +38,21 @@ class Message_processor():
 
         if china_check and message_sentiment == 'NEGATIVE': # Punish
             response = '🇨🇳 This message has been reported to The Ministry of State Security 🇨🇳\n🇨🇳 10 Credit Points Have Been Deducted From Your Balance 🇨🇳'
-            self.credit_score_keeper.alter_creditscore(member=message.author.name, points=-10)
-            return response
+            credit_change = -10
+            return response, credit_change
         elif china_check and message_sentiment == 'POSITIVE': # Reward
             response = '🇨🇳 The People Of China Thank You For Your Kind Words 🇨🇳\n🇨🇳 1 Credit Point Has Been Added To Your Balance 🇨🇳'
-            self.credit_score_keeper.alter_creditscore(member=message.author.name, points=1)
-            return response
+            credit_change = 1
+            return response, credit_change
         elif 'taiwan' in message_list:
             response = '🇨🇳 Did You Mean Chinese Taipei? 🇨🇳'
-            return response
+            return response, None
         elif 'tiananmen' in message_list:
             response = '🇨🇳 Odd Of You To Mention A Place Where Nothing Has Ever Happened... Especially on June 4th 1989 🇨🇳\n'
-            return response
+            return response, None
         elif china_check:
             response = '🇨🇳 China #1 🇨🇳'
-            return response
+            return response, None
         else:
             return None
         
