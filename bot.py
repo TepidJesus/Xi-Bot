@@ -52,6 +52,12 @@ class XiBot(commands.Bot):
                 print(f'[INFO] A Member Who Is On The Mute List Has Joined A Channel. Ensuring They Are Muted')
             except:
                 pass
+
+            try:
+                await member.edit(deafen=True)
+                print(f'[INFO] A Member Who Is On The Deafen List Has Joined A Channel. Ensuring They Are Deafened')
+            except:
+                pass
         
     async def on_member_join(self, member):
         guild = member.guild
@@ -80,7 +86,7 @@ class XiBot(commands.Bot):
                             await message.channel.send(bot_response)
 
             author_credit = self.credit_score_keeper.member_credit_check(member_name = message.author.name)
-            if author_credit <= 800 and author_credit > 791:
+            if author_credit <= 800 and author_credit > 791: # Need To Unmute Members when they return to this level from lower.
                 await message.channel.send('🇨🇳 Warning, Your Credit Score Has Dropped Below 800. If This Continues You Will Face Repercussions 🇨🇳')
             elif author_credit < 600:
                 try:
@@ -89,14 +95,16 @@ class XiBot(commands.Bot):
                 except:
                     self.credit_score_keeper.member_mute_list.append(message.author)
             elif author_credit < 400:
-                await message.channel.send('Credit < 400')
+                try:
+                    self.credit_score_keeper.member_deafen_list.append(message.author)
+                    await message.author.edit(deafen=True)
+                except:
+                    self.credit_score_keeper.member_deafen_list.append(message.author)
             elif author_credit < 200:
                 await message.author.guild.ban(user=message.author, delete_message_days=0, reason='To Low Credit Score')
             elif author_credit <= 0:
                 await message.channel.send('Credit < 0')
 
-
-            
                 
 bot = XiBot()
 bot.run(TOKEN)
