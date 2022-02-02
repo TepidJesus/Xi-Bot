@@ -19,6 +19,7 @@ class Message_processor():
                 self.message_list[i] = self.message_list[i].strip('.')
                 self.message_list[i] = self.message_list[i].strip(',')
                 self.message_list[i] = self.message_list[i].strip('-')
+                self.message_list[i] = self.message_list[i].strip('?')
                 self.message_list[i] = self.message_list[i].lower()
             else:
                 continue
