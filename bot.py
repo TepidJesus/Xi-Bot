@@ -44,9 +44,18 @@ class XiBot(commands.Bot):
             print(f'[INFO] {self.user} Has Joined The Server {self.guilds[0]}')
             self.credit_score_keeper.refresh_creditscores(guild_members=self.get_all_members())
 
+
+    async def on_voice_state_update(self, member, before, after):
+        if member.name in self.credit_score_keeper.member_mute_list and after.channel != None and before.channel == None:
+            try:
+                await member.edit(mute=True)
+                print(f'[INFO] A Member Who Is On The Mute List Has Joined A Channel. Ensuring They Are Muted')
+            except:
+                pass
+        
     async def on_member_join(self, member):
         guild = member.guild
-        print(f'{member.name} Joined')
+        print(f'[INFO] {member.name} Joined')
         self.credit_score_keeper.refresh_creditscores(guild_members=self.get_all_members())
         if guild.system_channel != None:
             welcome_message = f'The {random.choice(WELCOME_OPTIONS)} {member.name} has joined the server!'
@@ -61,18 +70,32 @@ class XiBot(commands.Bot):
             else:
                 messsage_list = self.message_processor.listify_message(message)
                 raw_sentiment_score, china_check = self.message_processor.run_message_checks(message = message.content, message_list = messsage_list)
-                bot_response = self.message_processor.choose_response(message = message, message_list = messsage_list, china_check = china_check, raw_sentiment_score = raw_sentiment_score)
-            
-            if bot_response == None:
-                return
-            else:
-                await message.channel.send(bot_response)
+                if china_check == True:
+                    bot_response, credit_change = self.message_processor.choose_response(message = message, message_list = messsage_list, china_check = china_check, raw_sentiment_score = raw_sentiment_score)
+                    if credit_change != None:
+                        self.credit_score_keeper.alter_creditscore(member=message.author.name, points=credit_change)
+                        if bot_response == None:
+                            return
+                        else:
+                            await message.channel.send(bot_response)
 
             author_credit = self.credit_score_keeper.member_credit_check(member_name = message.author.name)
-            print(author_credit)
-            if author_credit < 900:
-                print('User Credit Low')
-                await message.channel.send('Your Credit Score Is Getting Low...')
+            if author_credit <= 800 and author_credit > 791:
+                await message.channel.send('🇨🇳 Warning, Your Credit Score Has Dropped Below 800. If This Continues You Will Face Repercussions 🇨🇳')
+            elif author_credit < 600:
+                try:
+                    self.credit_score_keeper.member_mute_list.append(message.author)
+                    await message.author.edit(mute=True)
+                except:
+                    self.credit_score_keeper.member_mute_list.append(message.author)
+            elif author_credit < 400:
+                await message.channel.send('Credit < 400')
+            elif author_credit < 200:
+                await message.author.guild.ban(user=message.author, delete_message_days=0, reason='To Low Credit Score')
+            elif author_credit <= 0:
+                await message.channel.send('Credit < 0')
+
+
             
                 
 bot = XiBot()

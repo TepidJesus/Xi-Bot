@@ -8,16 +8,20 @@ class CreditKeeper():
         except:
             print('[INFO] Existing JSON Data Detected\n[INFO] A New File Will Not Be Generated')
 
+        self.member_mute_list = []
+
     def refresh_creditscores(self, guild_members):
         with open('credit_scores.json', 'r') as raw_json_scores:
             self.user_credit_scores = json.load(raw_json_scores)
             for member in guild_members:
                 if member.name not in self.user_credit_scores.keys():
                     self.user_credit_scores[member.name] = 1000
+                elif(self.user_credit_scores[member.name] < 600):
+                    self.member_mute_list.append(member.name)
                 else:
                     continue   
         with open('credit_scores.json', 'w') as file:
-            json.dump(self.user_credit_scores, file)
+            json.dump(self.user_credit_scores, file) 
 
     def display_credit_scores(self):
         self.output_string = str()

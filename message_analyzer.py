@@ -28,7 +28,6 @@ class Message_processor():
         s = flair.data.Sentence(message)
         self.flair_sentiment.predict(s)
         sentiment_score = s.labels
-        print(sentiment_score)
 
         china_check = any(other_word in message_list for other_word in CHINA_WORDS)
         return sentiment_score, china_check
