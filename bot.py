@@ -86,24 +86,36 @@ class XiBot(commands.Bot):
                             await message.channel.send(bot_response)
 
             author_credit = self.credit_score_keeper.member_credit_check(member_name = message.author.name)
-            if author_credit <= 800 and author_credit > 791: # Need To Unmute Members when they return to this level from lower.
-                await message.channel.send('🇨🇳 Warning, Your Credit Score Has Dropped Below 800. If This Continues You Will Face Repercussions 🇨🇳')
-            elif author_credit < 600:
+            if author_credit <= 800 and author_credit > 791:
+                await message.channel.send('🇨🇳 Attention Citizen, Your Credit Score Has Dropped Below 800. If This Continues You Will Be Punished Accordingly  🇨🇳')
+                try: # Removing The Lower Punishment From The Member
+                    await message.author.edit(mute=False)
+                    self.credit_score_keeper.member_mute_list.remove(message.author)
+                except:
+                    pass
+
+            elif author_credit < 600 and author_credit > 400:
                 try:
                     self.credit_score_keeper.member_mute_list.append(message.author)
                     await message.author.edit(mute=True)
                 except:
                     self.credit_score_keeper.member_mute_list.append(message.author)
-            elif author_credit < 400:
-                try:
+                try: # Removing The Lower Punishment From The Member
+                    await message.author.edit(deafen=False)
+                    self.credit_score_keeper.member_deafen_list.remove(message.author)
+                except:
+                    pass
+
+            elif author_credit < 400 and author_credit > 200:
+                try: # Applying The Punishment To The Member
                     self.credit_score_keeper.member_deafen_list.append(message.author)
                     await message.author.edit(deafen=True)
                 except:
                     self.credit_score_keeper.member_deafen_list.append(message.author)
+
             elif author_credit < 200:
-                await message.author.guild.ban(user=message.author, delete_message_days=0, reason='To Low Credit Score')
-            elif author_credit <= 0:
-                await message.channel.send('Credit < 0')
+                await message.author.guild.ban(user=message.author, delete_message_days=0, reason='The Credit Score Of This Citizen Reached Critical Levels. They Have Been Moved To A Re-education Center')
+                await message.channel.send(f'🇨🇳 {message.author.name} Has Been Moved To A Re-education Center 🇨🇳')
 
                 
 bot = XiBot()
