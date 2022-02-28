@@ -116,6 +116,7 @@ class XiBot(commands.Bot):
             elif author_credit < 200:
                 await message.author.guild.ban(user=message.author, delete_message_days=0, reason='The Credit Score Of This Citizen Reached Critical Levels. They Have Been Moved To A Re-education Center')
                 await message.channel.send(f'🇨🇳 {message.author.name} Has Been Moved To A Re-education Center 🇨🇳')
+                self.credit_score_keeper.alter_creditscore(message, points=20)
 
                 
 bot = XiBot()
