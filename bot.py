@@ -52,19 +52,19 @@ class XiBot(commands.Bot):
                 print(f'[INFO] A Member Who Is On The Mute List Has Joined A Channel. Ensuring They Are Muted')
             except:
                 pass
-        elif member.name in self.credit_score_keeper.member_deafen_list and after.channel != None and before.channel == None:
+        if member.name in self.credit_score_keeper.member_deafen_list and after.channel != None and before.channel == None:
             try:
                 await member.edit(deafen=True)
                 print(f'[INFO] A Member Who Is On The Deafen List Has Joined A Channel. Ensuring They Are Deafened')
             except:
                 pass
-        elif member.name not in self.credit_score_keeper.member_mute_list and after.channel != None and before.channel == None:
+        if member.name not in self.credit_score_keeper.member_mute_list and after.channel != None and before.channel == None:
             try:
                 await member.edit(mute=False)
                 print(f'[INFO] A Member Who Is No Longer The Mute List Has Joined A Channel. Ensuring They Are No Longer Deafened')
             except:
                 pass
-        elif member.name not in self.credit_score_keeper.member_deafen_list and after.channel != None and before.channel == None:
+        if member.name not in self.credit_score_keeper.member_deafen_list and after.channel != None and before.channel == None:
             try:
                 await member.edit(deafen=False)
                 print(f'[INFO] A Member Who Is Not On The Deafen List Has Joined A Channel. Ensuring They Are Deafened')
