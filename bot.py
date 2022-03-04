@@ -52,13 +52,25 @@ class XiBot(commands.Bot):
                 print(f'[INFO] A Member Who Is On The Mute List Has Joined A Channel. Ensuring They Are Muted')
             except:
                 pass
-
+        elif member.name in self.credit_score_keeper.member_deafen_list and after.channel != None and before.channel == None:
             try:
                 await member.edit(deafen=True)
                 print(f'[INFO] A Member Who Is On The Deafen List Has Joined A Channel. Ensuring They Are Deafened')
             except:
                 pass
-        
+        elif member.name not in self.credit_score_keeper.member_mute_list and after.channel != None and before.channel == None:
+            try:
+                await member.edit(mute=False)
+                print(f'[INFO] A Member Who Is No Longer The Mute List Has Joined A Channel. Ensuring They Are No Longer Deafened')
+            except:
+                pass
+        elif member.name not in self.credit_score_keeper.member_deafen_list and after.channel != None and before.channel == None:
+            try:
+                await member.edit(deafen=False)
+                print(f'[INFO] A Member Who Is Not On The Deafen List Has Joined A Channel. Ensuring They Are Deafened')
+            except:
+                pass
+
     async def on_member_join(self, member):
         guild = member.guild
         print(f'[INFO] {member.name} Joined')
@@ -91,26 +103,26 @@ class XiBot(commands.Bot):
             elif author_credit < 791 and author_credit > 600:
                 try: # Removing The Lower Punishment From The Member
                     await message.author.edit(mute=False)
-                    self.credit_score_keeper.member_mute_list.remove(message.author)
+                    self.credit_score_keeper.member_mute_list.remove(message.author.name)
                 except:
                     pass
             elif author_credit < 600 and author_credit > 400:
                 try:
-                    self.credit_score_keeper.member_mute_list.append(message.author)
+                    self.credit_score_keeper.member_mute_list.append(message.author.name)
                     await message.author.edit(mute=True)
                 except:
-                    self.credit_score_keeper.member_mute_list.append(message.author)
+                    self.credit_score_keeper.member_mute_list.append(message.author.name)
                 try: # Removing The Lower Punishment From The Member
                     await message.author.edit(deafen=False)
-                    self.credit_score_keeper.member_deafen_list.remove(message.author)
+                    self.credit_score_keeper.member_deafen_list.remove(message.author.name)
                 except:
                     pass
             elif author_credit < 400 and author_credit > 200:
                 try: # Applying The Punishment To The Member
-                    self.credit_score_keeper.member_deafen_list.append(message.author)
+                    self.credit_score_keeper.member_deafen_list.append(message.author.name)
                     await message.author.edit(deafen=True)
                 except:
-                    self.credit_score_keeper.member_deafen_list.append(message.author)
+                    self.credit_score_keeper.member_deafen_list.append(message.author.name)
             elif author_credit < 200:
                 await message.author.guild.ban(user=message.author, delete_message_days=0, reason='The Credit Score Of This Citizen Reached Critical Levels. They Have Been Moved To A Re-education Center')
                 await message.channel.send(f'🇨🇳 {message.author.name} Has Been Moved To A Re-education Center 🇨🇳')
